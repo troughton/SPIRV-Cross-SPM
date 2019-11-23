@@ -20,7 +20,9 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "SPIRV-Cross",
-            dependencies: []),
+            dependencies: [],
+            cxxSettings: [.define("SPIRV_CROSS_C_API_CPP"), .define("SPIRV_CROSS_C_API_GLSL"), .define("SPIRV_CROSS_C_API_HLSL"), .define("SPIRV_CROSS_C_API_MSL"), .define("SPIRV_CROSS_C_API_REFLECT")]
+            )
     ],
     cLanguageStandard: .c11, cxxLanguageStandard: .cxx14
 )
