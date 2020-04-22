@@ -113,6 +113,11 @@ public:
 		// Forces a storage buffer to always be declared as UAV, even if the readonly decoration is used.
 		// By default, a readonly storage buffer will be declared as ByteAddressBuffer (SRV) instead.
 		bool force_storage_buffer_as_uav = false;
+
+		// Forces any storage image type marked as NonWritable to be considered an SRV instead.
+		// For this to work with function call parameters, NonWritable must be considered to be part of the type system
+		// so that NonWritable image arguments are also translated to Texture rather than RWTexture.
+		bool nonwritable_uav_texture_as_srv = false;
 	};
 
 	explicit CompilerHLSL(std::vector<uint32_t> spirv_)
@@ -244,6 +249,7 @@ private:
 	// TODO: Refactor this to be more similar to MSL, maybe have some common system in place?
 	bool requires_op_fmod = false;
 	bool requires_fp16_packing = false;
+	bool requires_uint2_packing = false;
 	bool requires_explicit_fp16_packing = false;
 	bool requires_unorm8_packing = false;
 	bool requires_snorm8_packing = false;
@@ -282,6 +288,15 @@ private:
 		QueryTypeUInt = 32,
 		QueryTypeCount = 3
 	};
+
+	enum BitcastType
+	{
+		TypeNormal,
+		TypePackUint2x32,
+		TypeUnpackUint64
+	};
+
+	BitcastType get_bitcast_type(uint32_t result_type, uint32_t op0);
 
 	void emit_builtin_variables();
 	bool require_output = false;
