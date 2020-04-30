@@ -324,12 +324,12 @@ public:
 		// can be read in subsequent stages.
 		bool enable_clip_distance_user_varying = true;
 
-		bool is_ios()
+		bool is_ios() const
 		{
 			return platform == iOS;
 		}
 
-		bool is_macos()
+		bool is_macos() const
 		{
 			return platform == macOS;
 		}
@@ -635,6 +635,7 @@ protected:
 	bool builtin_translates_to_nonarray(spv::BuiltIn builtin) const override;
 
 	std::string bitcast_glsl_op(const SPIRType &result_type, const SPIRType &argument_type) override;
+	bool emit_complex_bitcast(uint32_t result_id, uint32_t id, uint32_t op0) override;
 	bool skip_argument(uint32_t id) const override;
 	std::string to_member_reference(uint32_t base, const SPIRType &type, uint32_t index, bool ptr_chain) override;
 	std::string to_qualifiers_glsl(uint32_t id) override;
@@ -896,6 +897,8 @@ protected:
 	void add_spv_func_and_recompile(SPVFuncImpl spv_func);
 
 	void activate_argument_buffer_resources();
+
+	bool type_is_msl_framebuffer_fetch(const SPIRType &type) const;
 
 	// OpcodeHandler that handles several MSL preprocessing operations.
 	struct OpCodePreprocessor : OpcodeHandler
